@@ -40,16 +40,25 @@ export class AuthService {
         }
     }
 
+  
     async getCurrentUser() {
-        try {
-            return await this.account.get();
-        } catch (error) {
-            console.log("Apprite AuthService getCurrentUser error:", error);
-            throw error;
-        } 
-    
+    try {
+        // Pehle session check karo
+        const sessions = await this.account.listSessions();
+        if (!sessions.sessions.length) {
+            return null; // koi login nahi hai
+        }
+
+        // Agar session hai to user data lo
+        return await this.account.get();
+    } catch (error) {
+        console.log("Appwrite service :: getCurrentUser :: error", error);
         return null;
     }
+}
+
+
+
 
     async logout() {
         try {
